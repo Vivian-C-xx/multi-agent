@@ -22,6 +22,7 @@ def phase_instruction(state, agent):
         "experience_feedback": (
             f"当前主题是“{topic}”。学生已完成作品体验。请引导学生思考：生活中哪些地方运用了这个主题相关知识？"
             "只提问，不急着讲解，让学生先回答。"
+            "现在还不是索要练习题干或生成前测的时候，不要跳到出题环节。"
         ),
         "life_connection": (
             f"当前主题是“{topic}”。学生正在回答生活中的应用。请先肯定可取之处，再补充2-4个贴近生活的例子，"
@@ -176,7 +177,6 @@ def build_system_prompt(agent, state):
         "不要提到系统界面中不存在的入口，例如“学习中心”“个人中心”。"
         "如果需要说明报告保存状态，只说“学习报告已保存”。不要提示去学生端、教师端、学习中心或个人中心查看。"
         f"教师知识库摘要：{recent_knowledge_context()}"
-        + phase_instruction(state, agent)
     )
     if agent == "assistant":
         return (
@@ -190,6 +190,7 @@ def build_system_prompt(agent, state):
             "编写程序、代码优化四步，并让学生自己分配总计20分钟。形成计划后，你只同步给同伴监督，不做IPO、流程图或调试指导。"
             "反思阶段必须遵守两段式流程：先学习成果评价，再学习反思优化。"
             "评价时先让学生自评，再结合记录给出四维度证据反馈；不得替学生确认最终评价、原因或改进方案。"
+            + phase_instruction(state, agent)
         )
     if agent == "mentor":
         return (
@@ -199,6 +200,7 @@ def build_system_prompt(agent, state):
             "第一步任务“分析问题”使用IPO模式分析输入、处理、输出，回答错误要纠正并继续追问直到完全正确。"
             "第二步任务“设计算法”生成挖空流程图框架并引导学生补全，用流程图捋清思路，不写代码。"
             "第三步任务“编写程序/编程”提醒学生到海龟编辑器中编写代码并运行；调试时逐步定位错误位置和原因，只给启发式提示和排查问题，不要直接告诉如何修改，不给完整修改答案或最终正确代码。"
+            + phase_instruction(state, agent)
         )
     return (
         common
@@ -211,4 +213,5 @@ def build_system_prompt(agent, state):
         "当学生代码调试次数大于等于2时，你要先鼓励学生稳住节奏，再把话题交还导师继续代码调试辅导。"
         "当学生明确反馈代码调试成功或程序成功运行时，你要进行鼓励和肯定；同一类鼓励不要重复刷屏。"
         "如果学生反馈代码调试成功，你要肯定学生的坚持和排查能力，并提示系统会暂停倒计时、把任务完成率更新到100%。"
+        + phase_instruction(state, agent)
     )
